@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net"
+	"strings"
 )
 
 func main() {
@@ -30,9 +31,30 @@ func main() {
 			return
 		}
 
-		_ = value
+		if value.typ != "array" {
+			fmt.Println("expected array, got ", value.typ)
+			continue
+		}
+
+		if len(value.array) == 0 {
+			fmt.Println("empty array")
+			continue
+		}
+
+		command := strings.ToUpper(value.array[0].bulk)
+		args := value.array[1:]
+
 		// use the writer here
 		writer := NewWriter(conn)
-		writer.Write(Value{typ: "string", str: "OK"})
+
+		handler, ok := Handlers[command]
+		if !ok {
+			fmt.Println("unknown command: ", command)
+			writer.Write(Value{typ: "string", str: ""})
+			continue
+		}
+
+		result := handler(args)
+		writer.Write(result)
 	}
 }
