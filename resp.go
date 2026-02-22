@@ -153,6 +153,8 @@ func (v Value) Marshal() []byte {
 		return v.marshalString()
 	case "null":
 		return v.marshallNull()
+	case "integer":
+		return v.marshalInteger()
 	case "error":
 		return v.marshallError()
 	default:
@@ -191,6 +193,14 @@ func (v Value) marshalArray() []byte {
 		bytes = append(bytes, v.array[i].Marshal()...)
 	}
 
+	return bytes
+}
+
+func (v Value) marshalInteger() []byte {
+	var bytes []byte
+	bytes = append(bytes, INTEGER)
+	bytes = append(bytes, strconv.Itoa(v.num)...)
+	bytes = append(bytes, '\r', '\n')
 	return bytes
 }
 
