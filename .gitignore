@@ -1,0 +1,3 @@
+redis-server
+database.aof
+dump.rdb
